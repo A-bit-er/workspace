@@ -1,0 +1,6 @@
+@ADScimApi_HostAddress = http://localhost:5207
+
+GET {{ADScimApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

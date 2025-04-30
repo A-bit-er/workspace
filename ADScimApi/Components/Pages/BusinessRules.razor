@@ -1,0 +1,244 @@
+@page "/business-rules"
+@using ADScimApi.Models
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILogger<BusinessRules> Logger
+
+<PageTitle>Business Rules</PageTitle>
+
+<h1>Business Rules</h1>
+
+<div class="row mb-3">
+    <div class="col">
+        <button class="btn btn-primary" @onclick="() => ShowRuleModal(new BusinessRule())">Add New Rule</button>
+    </div>
+</div>
+
+@if (loading)
+{
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (rules == null || !rules.Any())
+{
+    <div class="alert alert-info">No business rules found.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Object Type</th>
+                    <th>Condition</th>
+                    <th>Target OU</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rule in rules.OrderBy(r => r.Priority))
+                {
+                    <tr>
+                        <td>@rule.Name</td>
+                        <td>@rule.ObjectType</td>
+                        <td>@rule.Condition</td>
+                        <td>@rule.TargetOU</td>
+                        <td>@rule.Priority</td>
+                        <td>
+                            @if (rule.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-primary me-1" @onclick="() => ShowRuleModal(rule)">Edit</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteRule(rule.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (showModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(currentRule.Id == 0 ? "Add New Rule" : "Edit Rule")</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@currentRule" OnValidSubmit="SaveRule">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <InputText id="name" class="form-control" @bind-Value="currentRule.Name" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="objectType" class="form-label">Object Type</label>
+                            <InputSelect id="objectType" class="form-select" @bind-Value="currentRule.ObjectType">
+                                <option value="User">User</option>
+                                <option value="Group">Group</option>
+                                <option value="GMSA">Group Managed Service Account</option>
+                            </InputSelect>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="condition" class="form-label">Condition</label>
+                            <InputTextArea id="condition" class="form-control" rows="3" @bind-Value="currentRule.Condition" />
+                            <small class="form-text text-muted">
+                                Example: name.StartsWith("dev-") || department == "IT"
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="targetOU" class="form-label">Target OU</label>
+                            <InputSelect id="targetOU" class="form-select" @bind-Value="currentRule.TargetOU">
+                                <option value="">Select an OU...</option>
+                                @if (organizationalUnits != null)
+                                {
+                                    @foreach (var ou in organizationalUnits)
+                                    {
+                                        <option value="@ou.DistinguishedName">@ou.Name</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Priority</label>
+                            <InputNumber id="priority" class="form-control" @bind-Value="currentRule.Priority" />
+                            <small class="form-text text-muted">
+                                Lower numbers have higher priority. Rules are evaluated in priority order.
+                            </small>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <InputCheckbox id="isActive" class="form-check-input" @bind-Value="currentRule.IsActive" />
+                            <label class="form-check-label" for="isActive">Active</label>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private List<BusinessRule>? rules;
+    private List<OrganizationalUnit>? organizationalUnits;
+    private BusinessRule currentRule = new();
+    private bool showModal = false;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRules();
+        await LoadOrganizationalUnits();
+    }
+
+    private async Task LoadRules()
+    {
+        loading = true;
+        try
+        {
+            rules = await Http.GetFromJsonAsync<List<BusinessRule>>("/api/BusinessRules");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading business rules");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task LoadOrganizationalUnits()
+    {
+        try
+        {
+            organizationalUnits = await Http.GetFromJsonAsync<List<OrganizationalUnit>>("/api/OrganizationalUnits");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading organizational units");
+        }
+    }
+
+    private void ShowRuleModal(BusinessRule rule)
+    {
+        currentRule = rule;
+        showModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+    }
+
+    private async Task SaveRule()
+    {
+        try
+        {
+            if (currentRule.Id == 0)
+            {
+                // Create new rule
+                await Http.PostAsJsonAsync("/api/BusinessRules", currentRule);
+            }
+            else
+            {
+                // Update existing rule
+                await Http.PutAsJsonAsync($"/api/BusinessRules/{currentRule.Id}", currentRule);
+            }
+
+            CloseModal();
+            await LoadRules();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error saving business rule");
+        }
+    }
+
+    private async Task DeleteRule(int id)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this rule?"))
+        {
+            return;
+        }
+
+        try
+        {
+            await Http.DeleteAsync($"/api/BusinessRules/{id}");
+            await LoadRules();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error deleting business rule");
+        }
+    }
+}

@@ -1,0 +1,9 @@
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.csproj.AssemblyReference.cache
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.GeneratedMSBuildEditorConfig.editorconfig
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.AssemblyInfoInputs.cache
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.AssemblyInfo.cs
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.csproj.CoreCompileInputs.cache
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.MvcApplicationPartsAssemblyInfo.cs
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.MvcApplicationPartsAssemblyInfo.cache
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.RazorAssemblyInfo.cache
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.RazorAssemblyInfo.cs

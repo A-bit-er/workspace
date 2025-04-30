@@ -1,0 +1,43 @@
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Active Directory SCIM API</h1>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Overview</h5>
+            </div>
+            <div class="card-body">
+                <p>This application provides a SCIM 2.0 interface for managing Active Directory objects:</p>
+                <ul>
+                    <li>Users</li>
+                    <li>Groups</li>
+                    <li>gMSA (Group Managed Service Accounts)</li>
+                </ul>
+                <p>Use the navigation menu to manage these objects and configure business rules for OU assignment.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">API Endpoints</h5>
+            </div>
+            <div class="card-body">
+                <p>SCIM 2.0 endpoints:</p>
+                <ul>
+                    <li><code>/scim/v2/Users</code> - User management</li>
+                    <li><code>/scim/v2/Groups</code> - Group management</li>
+                </ul>
+                <p>Custom API endpoints:</p>
+                <ul>
+                    <li><code>/api/BusinessRules</code> - Business rules management</li>
+                    <li><code>/api/Auth</code> - Authentication and user management</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
