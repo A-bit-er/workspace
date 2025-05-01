@@ -7,3 +7,4 @@
 /workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.MvcApplicationPartsAssemblyInfo.cache
 /workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.RazorAssemblyInfo.cache
 /workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.RazorAssemblyInfo.cs
+/workspace/ADScimApi/obj/Debug/net8.0/ADScimApi.sourcelink.json

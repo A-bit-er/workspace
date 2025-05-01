@@ -36,7 +36,7 @@ public class ScimGroupsController : ControllerBase
     {
         try
         {
-            var groups = await _scimService.GetGroupsAsync(filter, startIndex, count, sortBy, sortOrder);
+            var groups = await _scimService.GetGroupsAsync(filter, startIndex, count);
             return Ok(groups);
         }
         catch (Exception ex)
@@ -56,7 +56,7 @@ public class ScimGroupsController : ControllerBase
     {
         try
         {
-            var group = await _scimService.GetGroupAsync(id);
+            var group = await _scimService.GetGroupByIdAsync(id);
             if (group == null)
             {
                 return NotFound(new ScimError
@@ -85,11 +85,8 @@ public class ScimGroupsController : ControllerBase
     {
         try
         {
-            // Apply business rules to determine OU
-            var targetOU = await _businessRuleService.DetermineTargetOUAsync("Group", group);
-            
             // Create group
-            var createdGroup = await _scimService.CreateGroupAsync(group, targetOU);
+            var createdGroup = await _scimService.CreateGroupAsync(group);
             
             return CreatedAtAction(nameof(GetGroup), new { id = createdGroup.Id }, createdGroup);
         }

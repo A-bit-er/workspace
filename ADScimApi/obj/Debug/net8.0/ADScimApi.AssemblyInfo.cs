@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ADScimApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b1d25b300d7aefee3d45a6581bd4a440b8ec11b2")]
 [assembly: System.Reflection.AssemblyProductAttribute("ADScimApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ADScimApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

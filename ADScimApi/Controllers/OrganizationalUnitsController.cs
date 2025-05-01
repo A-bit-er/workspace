@@ -51,10 +51,7 @@ public class OrganizationalUnitsController : ControllerBase
     {
         try
         {
-            // Create OU in Active Directory
-            await _adService.CreateOrganizationalUnitAsync(ou.Name, ou.DistinguishedName, ou.Description);
-            
-            // Add to database
+            // Add to database only for now
             _context.OrganizationalUnits.Add(ou);
             await _context.SaveChangesAsync();
 
@@ -85,11 +82,7 @@ public class OrganizationalUnitsController : ControllerBase
                 return NotFound();
             }
 
-            // Update OU in Active Directory
-            await _adService.UpdateOrganizationalUnitAsync(
-                existingOU.DistinguishedName, 
-                ou.Name, 
-                ou.Description);
+            // Update in database only for now
 
             // Update in database
             existingOU.Name = ou.Name;
@@ -126,8 +119,7 @@ public class OrganizationalUnitsController : ControllerBase
 
         try
         {
-            // Delete from Active Directory
-            await _adService.DeleteOrganizationalUnitAsync(ou.DistinguishedName);
+            // Delete from database only for now
             
             // Delete from database
             _context.OrganizationalUnits.Remove(ou);

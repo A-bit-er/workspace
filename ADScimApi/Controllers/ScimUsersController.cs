@@ -36,7 +36,7 @@ public class ScimUsersController : ControllerBase
     {
         try
         {
-            var users = await _scimService.GetUsersAsync(filter, startIndex, count, sortBy, sortOrder);
+            var users = await _scimService.GetUsersAsync(filter, startIndex, count);
             return Ok(users);
         }
         catch (Exception ex)
@@ -56,7 +56,7 @@ public class ScimUsersController : ControllerBase
     {
         try
         {
-            var user = await _scimService.GetUserAsync(id);
+            var user = await _scimService.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound(new ScimError
@@ -85,11 +85,8 @@ public class ScimUsersController : ControllerBase
     {
         try
         {
-            // Apply business rules to determine OU
-            var targetOU = await _businessRuleService.DetermineTargetOUAsync("User", user);
-            
             // Create user
-            var createdUser = await _scimService.CreateUserAsync(user, targetOU);
+            var createdUser = await _scimService.CreateUserAsync(user);
             
             return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
         }
